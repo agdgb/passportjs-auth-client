@@ -6,7 +6,7 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true); // Add a loading state
-
+  
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
     if (savedToken) {

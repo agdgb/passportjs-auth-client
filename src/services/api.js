@@ -36,7 +36,7 @@ api.interceptors.response.use(
         const refreshToken = localStorage.getItem("refreshToken");
 
         if (!refreshToken) {
-          throw new Error("Refresh token is missing");
+          window.location.href = "/login";
         }
 
         const res = await api.post("/api/users/refresh", {

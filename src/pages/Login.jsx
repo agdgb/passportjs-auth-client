@@ -1,18 +1,18 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
-import { AuthContext } from "../context/AuthContext"; // Import AuthContext
+import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext); // Get login function from AuthContext
+  const { login } = useContext(AuthContext);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(null); // Reset error state before login attempt
+    setError(null);
 
     try {
       const response = await api.post("/api/users/login", {
@@ -21,10 +21,8 @@ const Login = () => {
       });
       const { token, refreshToken } = response.data;
 
-      // Use the login function to set token and authentication state
       login(token, refreshToken);
 
-      // Redirect to dashboard (or home page)
       navigate("/");
     } catch (err) {
       setError("Invalid credentials, please try again.");
