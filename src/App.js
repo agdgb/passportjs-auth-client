@@ -6,6 +6,7 @@ import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./components/PrivateRoute";
 import Layout from "./components/Layout";
 import Profile from "./pages/Profile";
+import Register from "./pages/Register";
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
           >
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="register" element={<Register />} />
           </Route>
           <Route />
         </Routes>

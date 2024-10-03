@@ -28,7 +28,7 @@ const Navbar = ({ toggleSidebar }) => {
     setDropdownOpen((prev) => !prev);
   };
   return (
-    <div className="bg-gray-900 text-white p-1 flex justify-between items-center">
+    <div className="bg-gray-900 text-white p-1 flex justify-between lg:justify-end items-center">
       <button className="text-white lg:hidden" onClick={toggleSidebar}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -46,12 +46,12 @@ const Navbar = ({ toggleSidebar }) => {
         </svg>
       </button>
 
-      <h1 className="text-xl font-bold">My App</h1>
+      {/* <h1 className="text-xl font-bold">My App</h1> */}
 
       <div className="relative" ref={dropdownRef}>
         <div className="border border-gray-500 rounded-full">
           <button onClick={toggleDropdown} className="focus:outline-none">
-            <UserIcon className="h-6 w-6 text-white" />
+            <UserIcon className="h-4 w-6 text-white" />
           </button>
         </div>
 

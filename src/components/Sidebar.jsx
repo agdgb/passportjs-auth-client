@@ -1,9 +1,20 @@
-import { HomeIcon, PhoneIcon, UserIcon } from "@heroicons/react/16/solid";
-import React, { useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  HomeIcon,
+  ListBulletIcon,
+  PlusIcon,
+  UserIcon,
+} from "@heroicons/react/16/solid";
+import { UsersIcon } from "@heroicons/react/24/outline";
+import React, { useEffect, useRef, useState } from "react";
+import { NavLink } from "react-router-dom";
 
 const Sidebar = ({ isOpen, toggleSidebar, setOpen }) => {
   const sidebarRef = useRef(null);
+  const submenuRef = useRef(null);
+  const [isProfileOpen, setProfileOpen] = useState(false);
+  const [submenuHeight, setSubmenuHeight] = useState("0px");
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -17,6 +28,15 @@ const Sidebar = ({ isOpen, toggleSidebar, setOpen }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [sidebarRef]);
+
+  const toggleProfileMenu = () => {
+    setProfileOpen((prev) => !prev);
+    if (submenuRef.current) {
+      setSubmenuHeight(
+        isProfileOpen ? "0px" : `${submenuRef.current.scrollHeight}px`
+      );
+    }
+  };
 
   return (
     <div
@@ -48,19 +68,23 @@ const Sidebar = ({ isOpen, toggleSidebar, setOpen }) => {
       <nav className="pt-4">
         <ul>
           <li className="mb-2">
-            <Link
+            <NavLink
               to="/dashboard"
-              className="text-white hover:bg-gray-700 p-2 block rounded"
+              className={({ isActive }) =>
+                `text-white hover:bg-gray-700 p-2 block rounded ${
+                  isActive ? "bg-gray-700" : ""
+                }`
+              }
               onClick={toggleSidebar}
             >
               <span className="flex">
                 <HomeIcon className="h-5 w-5 mr-2" />
                 Dashboard
               </span>
-            </Link>
+            </NavLink>
           </li>
           <li className="mb-2">
-            <Link
+            <NavLink
               to="/profile"
               className="text-white hover:bg-gray-700 p-2 block rounded"
               onClick={toggleSidebar}
@@ -69,16 +93,72 @@ const Sidebar = ({ isOpen, toggleSidebar, setOpen }) => {
                 <UserIcon className="h-5 w-5 mr-2" />
                 Profile
               </span>
-            </Link>
+            </NavLink>
           </li>
           <li className="mb-2">
-            <Link
+            <NavLink
               to="/settings"
               className="text-white hover:bg-gray-700 p-2 block rounded"
               onClick={toggleSidebar}
             >
               Settings
-            </Link>
+            </NavLink>
+          </li>
+
+          <li className="mb-2">
+            <div
+              className="text-white hover:bg-gray-700 p-2 rounded cursor-pointer flex justify-between items-center"
+              onClick={toggleProfileMenu}
+            >
+              <span className="flex">
+                <UsersIcon className="h-5 w-5 mr-2" />
+                User Management
+              </span>
+              {isProfileOpen ? (
+                <ChevronDownIcon className="h-5 w-5" />
+              ) : (
+                <ChevronRightIcon className="h-5 w-5" />
+              )}
+            </div>
+            <ul
+              ref={submenuRef}
+              style={{ maxHeight: submenuHeight }}
+              className={`pl-4 overflow-hidden transition-[max-height] duration-300 ease-in-out`}
+            >
+              <li>
+                <NavLink
+                  to="/register"
+                  className="text-white hover:bg-gray-700 p-2 block rounded"
+                  onClick={toggleSidebar}
+                >
+                  <span className="flex">
+                    <PlusIcon className="h-6 w-6 mr-2" />
+                    Add User
+                  </span>
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/users"
+                  className="text-white hover:bg-gray-700 p-2 block rounded"
+                  onClick={toggleSidebar}
+                >
+                  <span className="flex">
+                    <ListBulletIcon className="h-6 w-6 mr-2" />
+                    Users
+                  </span>
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/dashboard"
+                  className="text-white hover:bg-gray-700 p-2 block rounded"
+                  onClick={toggleSidebar}
+                >
+                  Security Settings
+                </NavLink>
+              </li>
+            </ul>
           </li>
         </ul>
       </nav>
