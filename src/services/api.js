@@ -1,4 +1,5 @@
 import axios from "axios";
+import HandleApiError from "../utils/handleApiError";
 
 const api = axios.create({
   baseURL: "http://localhost:3000",
@@ -8,34 +9,41 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(
-  (config) => {
+  (config) =>
+  {
     const token = localStorage.getItem("token");
-    if (token) {
+    if (token)
+    {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => {
+  (error) =>
+  {
     return Promise.reject(error);
   }
 );
 
 api.interceptors.response.use(
   (response) => response,
-  async (error) => {
+  async (error) =>
+  {
     let originalRequest = error.config;
 
     if (
       error.response &&
       error.response.status === 401 &&
       !originalRequest._retry
-    ) {
+    )
+    {
       originalRequest._retry = true;
 
-      try {
+      try
+      {
         const refreshToken = localStorage.getItem("refreshToken");
 
-        if (!refreshToken) {
+        if (!refreshToken)
+        {
           window.location.href = "/login";
         }
 
@@ -49,11 +57,15 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${res.data.accessToken}`;
 
         return api(originalRequest);
-      } catch (err) {
+      } catch (err)
+      {
         window.location.href = "/login";
         localStorage.removeItem("token");
         localStorage.removeItem("refreshToken");
       }
+    } else if (error.response && error.response.status)
+    {
+      HandleApiError(error)
     }
 
     return Promise.reject(error);

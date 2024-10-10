@@ -4,16 +4,16 @@ import BarChart from "../charts/BarChart";
 import CalendarChart from "../charts/CalendarChar";
 
 const Dashboard = () => {
-  const [response, setResponse] = useState("");
+  // const [response, setResponse] = useState("");
 
-  useEffect(() => {
-    const ff = async () => {
-      const res = await api.get("/api/users/user");
-      setResponse(res.data);
-    };
+  // useEffect(() => {
+  //   const ff = async () => {
+  //     const res = await api.get("/api/users/user");
+  //     setResponse(res.data);
+  //   };
 
-    ff();
-  }, []);
+  //   ff();
+  // }, []);
 
   const barData = [
     {
@@ -60,16 +60,16 @@ const Dashboard = () => {
     },
   ];
 
-  const accessAdmin = async () => {
-    const res = await api.get("/api/users/admin", {
-      token: localStorage.getItem("refreshToken"),
-    });
-    setResponse(res.data);
-  };
-  const accessUser = async () => {
-    const res = await api.get("/api/users/user");
-    setResponse(res.data);
-  };
+  // const accessAdmin = async () => {
+  //   const res = await api.get("/api/users/admin", {
+  //     token: localStorage.getItem("refreshToken"),
+  //   });
+  //   setResponse(res.data);
+  // };
+  // const accessUser = async () => {
+  //   const res = await api.get("/api/users/user");
+  //   setResponse(res.data);
+  // };
 
   return (
     <div className="p-8 bg-gray-100 min-h-screen">

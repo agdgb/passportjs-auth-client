@@ -41,7 +41,7 @@ const Sidebar = ({ isOpen, toggleSidebar, setOpen }) => {
   return (
     <div
       ref={sidebarRef}
-      className={`bg-gray-800 text-white w-64 p-4 fixed top-0 left-0 h-full lg:static lg:block transition-transform duration-300 ease-in-out transform ${
+      className={`bg-gray-800 text-white w-64 xl:w-72 p-4 fixed top-0 left-0 h-full lg:static lg:block transition-transform duration-300 ease-in-out transform ${
         isOpen ? "translate-x-0" : "-translate-x-full"
       } z-50 lg:translate-x-0`}
     >
@@ -65,11 +65,11 @@ const Sidebar = ({ isOpen, toggleSidebar, setOpen }) => {
         </button>
       </div>
       <hr className="border border-gray-500" />
-      <nav className="pt-4">
+      <nav className="pt-4 overflow-y-scroll overflow-x-scroll">
         <ul>
           <li className="mb-2">
             <NavLink
-              to="/dashboard"
+              to="/"
               className={({ isActive }) =>
                 `text-white hover:bg-gray-700 p-2 block rounded ${
                   isActive ? "bg-gray-700" : ""
@@ -151,7 +151,7 @@ const Sidebar = ({ isOpen, toggleSidebar, setOpen }) => {
               </li>
               <li>
                 <NavLink
-                  to="/dashboard"
+                  to="/"
                   className="text-white hover:bg-gray-700 p-2 block rounded"
                   onClick={toggleSidebar}
                 >

@@ -1,186 +1,291 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { useForm } from "react-hook-form";
+import api from "../services/api";
+import RoleList from "../components/RoleList";
 
 const Register = () => {
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    watch,
+  } = useForm({
+    defaultValues: {
+      username: "",
+      firstName: "",
+      lastName: "",
+      grandFatherName: "",
+      email: "",
+      phone: "",
+      password: "",
+      confirmPassword: "",
+      status: true,
+      roles: [],
+    },
   });
 
-  const { username, email, password } = formData;
+  const password = watch("password");
+  const [message, setMessage] = useState(null);
+  const [errorDetails, setErrorDetails] = useState(null);
+  const [statusCode, setStatusCode] = useState(0);
+  const [selectedRoles, setSelectedRoles] = useState([]);
 
-  const onChange = (e) =>
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-
-  const onSubmit = async (e) => {
-    e.preventDefault();
+  const handleRoleSelect = (roleName) => {
+    if (selectedRoles.includes(roleName)) {
+      setSelectedRoles((prev) => prev.filter((role) => role !== roleName));
+    } else {
+      setSelectedRoles((prev) => [...prev, roleName]);
+    }
+  };
+  const onSubmit = async (formData) => {
     try {
-      const res = await axios.post("/api/auth/register", formData);
-      alert(res.data.msg);
+      const res = await api.post("/api/users/register", formData);
+      setMessage(res.data.message);
+      setStatusCode(res.status);
+      setSelectedRoles([]);
+      reset();
     } catch (error) {
-      alert(error.response.data.msg);
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        setMessage(error.response.data.message);
+        setErrorDetails(error.response.data.details);
+        setStatusCode(error.response.status);
+      } else {
+        setMessage("An unexpected error occurred");
+        setStatusCode(500);
+      }
     }
   };
 
   return (
-    <div className="p-8 border border-red-500">
-      <div class="border-b border-gray-900/10 pb-12 max-w-4xl mx-auto">
-        <h2 class="text-base font-semibold leading-7 text-gray-900">
+    <div className="p-8">
+      <div className="pb-4 max-w-4xl mx-auto">
+        <h2 className="mb-4 text-base font-semibold leading-7 text-gray-900">
           Personal Information
         </h2>
-        <p class="mt-1 text-sm leading-6 text-gray-600">
-          Use a permanent address where you can receive mail.
-        </p>
-
-        <div class="mt-10 grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-4">
-          <div class="sm:col-span-2">
-            <label
-              for="email"
-              class="block text-sm font-medium leading-6 text-gray-900"
+        {message && (
+          <>
+            <p
+              className={`${
+                statusCode === 201 ? "text-green-700" : "text-red-700"
+              } font-semibold`}
             >
-              First name
+              {message}
+            </p>
+            <span className="text-red-600 text-sm">{errorDetails}</span>
+          </>
+        )}
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="grid grid-cols-2 gap-x-6 sm:grid-cols-4"
+        >
+          <div className="p-1 sm:col-span-2">
+            <label className="block text-sm font-medium leading-6 text-gray-900">
+              Username
             </label>
-            <div class="mt-2">
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autocomplete="email"
-                class="block w-full max-w-sm rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
+            <input
+              {...register("username", { required: "Username is required" })}
+              type="text"
+              className="block w-full max-w-xs rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-1 focus:ring-inset focus:ring-gray-800 sm:text-sm"
+            />
+            {errors.username && (
+              <span className="text-red-600 text-sm">
+                {errors.username.message}
+              </span>
+            )}
           </div>
 
-          <div class="sm:col-span-2">
-            <label
-              for="last-name"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Last name
+          <div className="p-1 sm:col-span-2">
+            <label className="block text-sm font-medium leading-6 text-gray-900">
+              First Name
             </label>
-            <div class="mt-2">
-              <input
-                type="text"
-                name="last-name"
-                id="last-name"
-                autocomplete="family-name"
-                class="block w-full max-w-xs rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
+            <input
+              {...register("firstName", {
+                required: "First Name is required",
+                maxLength: {
+                  value: 130,
+                  message: "First Name must be at most 30 characters long",
+                },
+              })}
+              type="text"
+              className="block w-full max-w-xs rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-1 focus:ring-inset focus:ring-gray-800 sm:text-sm"
+            />
+            {errors.firstName && (
+              <span className="text-red-600 text-sm">
+                {errors.firstName.message}
+              </span>
+            )}
           </div>
 
-          <div class="sm:col-span-2">
-            <label
-              for="email"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Email address
+          <div className="p-1 sm:col-span-2">
+            <label className="block text-sm font-medium leading-6 text-gray-900">
+              Last Name
             </label>
-            <div class="mt-2">
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autocomplete="email"
-                class="block w-full max-w-sm rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
+            <input
+              {...register("lastName", {
+                required: "Last Name is required",
+                maxLength: {
+                  value: 130,
+                  message: "Last Name must be at most 30 characters long",
+                },
+              })}
+              type="text"
+              className="block w-full max-w-xs rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-1 focus:ring-inset focus:ring-gray-800 sm:text-sm"
+            />
+            {errors.lastName && (
+              <span className="text-red-600 text-sm">
+                {errors.lastName.message}
+              </span>
+            )}
           </div>
 
-          <div class="sm:col-span-2">
-            <label
-              for="country"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Country
+          <div className="p-1 sm:col-span-2">
+            <label className="block text-sm font-medium leading-6 text-gray-900">
+              G.Father Name
             </label>
-            <div class="mt-2">
-              <select
-                id="country"
-                name="country"
-                autocomplete="country-name"
-                class="block w-full max-w-xs rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              >
-                <option>United States</option>
-                <option>Canada</option>
-                <option>Mexico</option>
-              </select>
-            </div>
+            <input
+              {...register("grandFatherName", {
+                maxLength: {
+                  value: 130,
+                  message:
+                    "Grandfather Name must be at most 30 characters long",
+                },
+              })}
+              type="text"
+              className="block w-full max-w-xs rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-1 focus:ring-inset focus:ring-gray-800 sm:text-sm"
+            />
+            {errors.grandFatherName && (
+              <span className="text-red-600 text-sm">
+                {errors.grandFatherName.message}
+              </span>
+            )}
           </div>
 
-          <div class="col-span-2">
-            <label
-              for="street-address"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Street address
+          <div className="p-1 sm:col-span-2">
+            <label className="block text-sm font-medium leading-6 text-gray-900">
+              Email
             </label>
-            <div class="mt-2">
-              <input
-                type="text"
-                name="street-address"
-                id="street-address"
-                autocomplete="street-address"
-                class="block w-full max-w-lg rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
+            <input
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
+                  message: "Invalid email address",
+                },
+              })}
+              type="email"
+              className="block w-full max-w-xs rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-1 focus:ring-inset focus:ring-gray-800 sm:text-sm"
+            />
+            {errors.email && (
+              <span className="text-red-600 text-sm">
+                {errors.email.message}
+              </span>
+            )}
           </div>
 
-          <div class="sm:col-span-2">
-            <label
-              for="city"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              City
+          <div className="p-1 sm:col-span-2">
+            <label className="block text-sm font-medium leading-6 text-gray-900">
+              Phone
             </label>
-            <div class="mt-2">
-              <input
-                type="text"
-                name="city"
-                id="city"
-                autocomplete="address-level2"
-                class="block w-full max-w-xs rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
+            <input
+              {...register("phone", {
+                maxLength: {
+                  value: 130,
+                  message: "Phone number must be at most 13 characters long",
+                },
+              })}
+              type="tel"
+              className="block w-full max-w-xs rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-1 focus:ring-inset focus:ring-gray-800 sm:text-sm"
+            />
+            {errors.phone && (
+              <span className="text-red-600 text-sm">
+                {errors.phone.message}
+              </span>
+            )}
           </div>
 
-          <div class="sm:col-span-2">
-            <label
-              for="region"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              State / Province
+          <div className="p-1 sm:col-span-2">
+            <label className="block text-sm font-medium leading-6 text-gray-900">
+              Password
             </label>
-            <div class="mt-2">
-              <input
-                type="text"
-                name="region"
-                id="region"
-                autocomplete="address-level1"
-                class="block w-full max-w-xs rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
+            <input
+              {...register("password", { required: "Password is required" })}
+              type="password"
+              className="block w-full max-w-xs rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-1 focus:ring-inset focus:ring-gray-800 sm:text-sm"
+            />
+            {errors.password && (
+              <span className="text-red-600 text-sm">
+                {errors.password.message}
+              </span>
+            )}
           </div>
 
-          <div class="sm:col-span-2">
-            <label
-              for="postal-code"
-              class="block text-sm font-medium leading-6 text-gray-900"
-            >
-              ZIP / Postal code
+          <div className="p-1 sm:col-span-2">
+            <label className="block text-sm font-medium leading-6 text-gray-900">
+              Confirm Password
             </label>
-            <div class="mt-2">
-              <input
-                type="text"
-                name="postal-code"
-                id="postal-code"
-                autocomplete="postal-code"
-                class="block w-full max-w-xs rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
+            <input
+              {...register("confirmPassword", {
+                required: "Please confirm your password",
+                validate: (value) =>
+                  value === password || "Passwords do not match",
+              })}
+              type="password"
+              className="block w-full max-w-xs rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-1 focus:ring-inset focus:ring-gray-800 sm:text-sm"
+            />
+            {errors.confirmPassword && (
+              <span className="text-red-600 text-sm">
+                {errors.confirmPassword.message}
+              </span>
+            )}
           </div>
-        </div>
+
+          <div className="p-1 sm:col-span-2">
+            <label className="block leading-6">&nbsp;</label>
+            <label className="block text-sm font-medium leading-6 text-gray-900">
+              <input {...register("status")} type="checkbox" className="mr-2" />
+              &nbsp; Active
+            </label>
+          </div>
+          <div className="p-1 sm:col-span-2"></div>
+          <div className="p-1 sm:col-span-4">
+            <RoleList
+              onRoleSelect={handleRoleSelect}
+              selectedRoles={selectedRoles}
+            />
+          </div>
+
+          <div className="p-1 sm:col-span-2"></div>
+          <div className="flex gap-2 sm:col-span-1">
+            <button
+              type="submit"
+              className="block max-w-xs w-full rounded-md border-0 p-1.5 text-white bg-blue-600 hover:bg-blue-900 transition-all ease-in-out duration-300"
+            >
+              Save
+            </button>
+            {/* <button
+              type="submit"
+              onClick={log}
+              className="block max-w-xs w-full rounded-md border-0 p-1.5 text-white bg-blue-600 hover:bg-blue-900 transition-all ease-in-out duration-300"
+            >
+              log
+            </button> */}
+            <button
+              type="button"
+              onClick={() => {
+                reset();
+                setSelectedRoles([]);
+              }}
+              className="block max-w-xs w-full rounded-md border-0 p-1.5 text-white bg-red-600 hover:bg-red-900 transition-all ease-in-out duration-300"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
