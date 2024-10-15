@@ -5,6 +5,10 @@ import {
   ArrowRightStartOnRectangleIcon,
   UserIcon,
 } from "@heroicons/react/16/solid";
+import { FaRecycle } from "react-icons/fa6";
+import { LockClosedIcon } from "@heroicons/react/24/outline";
+import { BsPersonCircle } from "react-icons/bs";
+import { IoPersonCircleOutline } from "react-icons/io5";
 
 const Navbar = ({ toggleSidebar }) => {
   const { logout } = useContext(AuthContext);
@@ -58,16 +62,30 @@ const Navbar = ({ toggleSidebar }) => {
             <ul>
               <li>
                 <Link
-                  to="/account"
+                  to="/profile"
                   className="block px-4 py-2 hover:bg-gray-600 rounded"
                   onClick={() => setDropdownOpen(false)}
                 >
                   <span className="flex">
-                    <ArrowRightStartOnRectangleIcon className="h-6 w-6 mr-2" />
+                    <UserIcon className="h-6 w-6 mr-2" />
                     Profile
                   </span>
                 </Link>
               </li>
+
+              <li>
+                <Link
+                  to="/changepassword"
+                  className="block px-4 py-2 hover:bg-gray-600 rounded"
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  <span className="flex">
+                    <LockClosedIcon className="h-6 w-6 mr-2" />
+                    Change Password
+                  </span>
+                </Link>
+              </li>
+
               <li>
                 <Link
                   to="/login"

@@ -19,9 +19,9 @@ const Login = () => {
         username,
         password,
       });
-      const { token, refreshToken } = response.data;
+      const { token, refreshToken, currentUser } = response.data;
 
-      login(token, refreshToken);
+      login(token, refreshToken, currentUser);
 
       navigate("/");
     } catch (err) {

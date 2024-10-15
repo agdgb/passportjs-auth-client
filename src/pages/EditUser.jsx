@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import api from "../services/api";
 import RoleList from "../components/RoleList";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner";
 import toast from "react-hot-toast";
 
@@ -10,11 +10,11 @@ const EditUser = () => {
   const {
     register,
     handleSubmit,
-    setValue,
     reset,
     formState: { errors },
   } = useForm();
   const { id } = useParams();
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [selectedRoles, setSelectedRoles] = useState([]);
   const [message, setMessage] = useState(null);
@@ -49,7 +49,6 @@ const EditUser = () => {
   const onSubmit = async (formData) => {
     try {
       formData.roles = selectedRoles;
-      console.log("FORM DATA DATA:", formData);
       const response = await api.put(`/api/users/${id}`, formData);
       setMessage("User updated successfully!");
       setStatusCode(response.status);
@@ -61,6 +60,10 @@ const EditUser = () => {
       setMessage("An error occurred while updating the user.");
       setStatusCode(error.response ? error.response.status : 500);
     }
+  };
+
+  const handleCancel = () => {
+    navigate(-1);
   };
 
   if (loading) {
@@ -94,9 +97,9 @@ const EditUser = () => {
             className="grid grid-cols-2 gap-4"
           >
             <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
+              <label className="block text-sm font-medium leading-6 text-gray-700">
                 Username
-              </label>
+              </label>re
               <input
                 {...register("username", { required: "Username is required" })}
                 type="text"
@@ -110,7 +113,7 @@ const EditUser = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
+              <label className="block text-sm font-medium leading-6 text-gray-700">
                 First Name
               </label>
               <input
@@ -128,7 +131,7 @@ const EditUser = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
+              <label className="block text-sm font-medium leading-6 text-gray-700">
                 Last Name
               </label>
               <input
@@ -144,7 +147,7 @@ const EditUser = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
+              <label className="block text-sm font-medium leading-6 text-gray-700">
                 Grandfather Name
               </label>
               <input
@@ -162,7 +165,7 @@ const EditUser = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
+              <label className="block text-sm font-medium leading-6 text-gray-700">
                 Email
               </label>
               <input
@@ -184,7 +187,7 @@ const EditUser = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
+              <label className="block text-sm font-medium leading-6 text-gray-700">
                 Phone
               </label>
               <input
@@ -200,11 +203,14 @@ const EditUser = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium leading-6 text-gray-900">
-                Status
+              <label className="block text-sm font-medium leading-6 text-gray-700">
+                <input
+                  {...register("status")}
+                  type="checkbox"
+                  className="mr-2"
+                />
+                Active
               </label>
-              <input {...register("status")} type="checkbox" className="mr-2" />
-              Active
             </div>
 
             <div className="col-span-2">
@@ -223,7 +229,7 @@ const EditUser = () => {
               </button>
               <button
                 type="button"
-                onClick={() => reset(user)}
+                onClick={handleCancel}
                 className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-800"
               >
                 Cancel

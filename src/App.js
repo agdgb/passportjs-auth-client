@@ -12,6 +12,7 @@ import NotFound from "./pages/error/404";
 import EditUser from "./pages/EditUser";
 import ErrorPage from "./pages/ErrorPage";
 import { Toaster } from "react-hot-toast";
+import ChangePassword from "./pages/ChangePassword";
 
 const App = () =>
 {
@@ -36,6 +37,7 @@ const App = () =>
             <Route path="register" element={<Register />} />
             <Route path="users" element={<UserList />} />
             <Route path="users/edit/:id" element={<EditUser />} />
+            <Route path="changepassword" element={<ChangePassword />} />
           </Route>
           <Route />
         </Routes>

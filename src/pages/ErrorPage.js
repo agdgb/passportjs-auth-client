@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import queryString from "query-string";
 import { AuthContext } from "../context/AuthContext";
 
@@ -37,12 +37,12 @@ const ErrorPage = () =>
     const { logout } = useContext(AuthContext)
     const queryParams = queryString.parse(location.search);
     const errorCode = queryParams.code || "default";
-
+    const navigate = useNavigate();
     const { title, message, color } = errorDetails[errorCode] || errorDetails.default;
 
     const handleGoBackHome = () =>
     {
-        window.location.href = "/";
+        navigate(-1)
     };
 
     const handleLogout = () =>
